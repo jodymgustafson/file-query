@@ -2,6 +2,7 @@ import { Dirent } from "fs";
 import { getFileReader } from "../util/file-util";
 import { FilterOperator } from "./file-query-filter";
 import { PatternFilter } from "./pattern-filter";
+import path from "path";
 
 export class FileContentsFilter extends PatternFilter {
     /**
@@ -36,7 +37,7 @@ export class FileContentsFilter extends PatternFilter {
         // If checking "not contains" assume accepted
         let accepted = (this.filterOperator === "NotEqual");
 
-        const reader = getFileReader(file.path);
+        const reader = getFileReader(path.join(file.path, file.name));
         for await (const line of reader) {
             accepted = this.testLine(line);
             if (accepted) break;
