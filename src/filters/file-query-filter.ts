@@ -21,17 +21,15 @@ export interface FileQueryFilter {
     accept(file: Dirent): Promise<boolean>;
 
     /** Property to get the name of the filter */
-    get name(): string;
+    get filterType(): FilterType;
 }
 
 /**
  * Abstract base class for all filters
  */
 export abstract class BaseFileQueryFilter implements FileQueryFilter {
-    constructor(readonly filterOperator: FilterOperator) {
+    constructor(readonly filterType: FilterType, readonly filterOperator: FilterOperator) {
     }
-
-    abstract get name(): string;
 
     /**
      * Implementation of the file test
@@ -49,6 +47,6 @@ export abstract class BaseFileQueryFilter implements FileQueryFilter {
     }
 
     toString(): string {
-        return this.name + "; op:" + this.filterOperator;
+        return this.filterType + "; op:" + this.filterOperator;
     }
 }

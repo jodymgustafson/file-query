@@ -1,0 +1,5 @@
+{
+  "fileSources": [{ "path": "./src", "isRecursive": true }],
+  "excludePaths": ["./node_modules"],
+  "filters": [{ "type": "Contents", "operator": "Equals", "pattern": "FilterOperator" }]
+}

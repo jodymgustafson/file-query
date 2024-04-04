@@ -79,7 +79,6 @@ export class FileQueryExecutor {
             try {
                 const paths = await readdir(dirPath, { withFileTypes: true });
                 const files = paths.filter(p => !p.isDirectory());
-                // Can't use simple filter, get all files
                 results.push(...(await this.testFiles(files, filters)));
 
                 if (isRecursive) {

@@ -1,11 +1,11 @@
-import { BaseFileQueryFilter, FileQueryError, FilterOperator } from "./file-query-filter";
+import { BaseFileQueryFilter, FileQueryError, FilterOperator, FilterType } from "./file-query-filter";
 
 /**
  * Base class for filters that only accept = or <> operators
  */
 export abstract class EqualNotEqualFilter extends BaseFileQueryFilter {
-    constructor(op: FilterOperator) {
-        super(op);
+    constructor(filterType: FilterType, op: FilterOperator) {
+        super(filterType, op);
         this.validateOperator();
     }
 
@@ -17,7 +17,7 @@ export abstract class EqualNotEqualFilter extends BaseFileQueryFilter {
             case "In":
                 return;
             default:
-                throw new FileQueryError(`Invalid ${this.name} filter operator: ${this.filterOperator}`);
+                throw new FileQueryError(`Invalid ${this.filterType} filter operator: ${this.filterOperator}`);
         }
     }
 }

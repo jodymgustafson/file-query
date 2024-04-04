@@ -1,59 +1,38 @@
 import { Dirent } from "fs";
 import { EqualNotEqualFilter } from "./equality-filter";
 import { FilterOperator } from "./file-query-filter";
+import { PatternFilter } from "./pattern-filter";
 
 /**
  * Filter for testing file name.
  * The pattern can use star and question mark wildcards.
  * TODO: should we use glob instead?
  */
-export class FileNameFilter extends EqualNotEqualFilter {
-    private readonly regExpes: RegExp[] = [];
-
-    /// <summary>
-    /// Tests that a file matches the specified pattern
-    /// </summary>
-    /// <param name="pattern">A simple file search pattern, may contain wildcards</param>
+export class FileNameFilter extends PatternFilter {
+    /**
+     * Tests that a file matches the specified pattern
+     * @param pattern A simple file search pattern, may contain wildcards
+     */
     constructor(pattern: string);
-    /// <summary>
-    /// Tests that a file matches one of the specified patterns (OR)
-    /// </summary>
-    /// <param name="pattern">A simple file search pattern, may contain wildcards</param>
+    /**
+     * Tests that a file matches one of the specified patterns (OR)
+     * @param patterns A simple file search pattern, may contain wildcards
+     */
     constructor(...patterns: string[]);
-    /// <summary>
-    /// Tests that the pattern satisfies the specified operator
-    /// </summary>
-    /// <param name="pattern">A simple file search pattern, may contain wildcards</param>
-    /// <see cref="DirectoryInfo.GetFiles"/>
-    /// <param name="op"></param>
+    /**
+     * Tests that the pattern satisfies the specified operator
+     * @param pattern Tests that the pattern satisfies the specified operator
+     * @param op The filter operator
+     */
     constructor(pattern: string, op: FilterOperator);
+    /**
+     * Tests that the regular expression satisfies the specified operator
+     * @param regex A regular expression
+     * @param op The filter operator
+     */
     constructor(regex: RegExp, op: FilterOperator)
     constructor(pattern: string | string[] | RegExp, op?: FilterOperator) {
-        super(op ?? pattern instanceof Array ? "In" : "Equal");
-
-        if (pattern instanceof Array) {
-            pattern.forEach(p => this.addPattern(p));
-        }
-        else if (pattern instanceof RegExp) {
-            this.regExpes.push(pattern);
-        }
-    }
-
-    /// <summary>
-    /// Converts a string pattern to a regex and adds it to the list of patterns to check
-    /// </summary>
-    /// <param name="pattern">Can use star and question mark wildcards</param>
-    private addPattern(pattern: string): void {
-        const re = this.patternToRegExp(pattern);
-        this.regExpes.push(re);
-    }
-
-    private patternToRegExp(pattern: string): RegExp {
-        const exp = pattern.toLowerCase()
-            .replace(/\./g, "\\.")
-            .replace(/\*/g, ".*")
-            .replace(/\?/g, ".{1}");
-        return new RegExp(`(^${exp}$)`);
+        super("Name", pattern, op);
     }
 
     override async acceptFile(file: Dirent): Promise<boolean> {
@@ -67,13 +46,5 @@ export class FileNameFilter extends EqualNotEqualFilter {
             }
         }
         return (this.filterOperator === "NotEqual" ? !accept : accept);
-    }
-
-    override get name(): string {
-        return "name";
-    }
-
-    override toString(): string {
-        return super.toString() + ": " + this.regExpes.map(re => re.source).join(";");
     }
 }
