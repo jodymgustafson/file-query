@@ -24,7 +24,7 @@ export class FileQueryExecutor {
     constructor(onFileFound?: FileFoundCallback) {
         this.onFileFound = onFileFound;
     }
-    
+
     cancel(): void {
         this.abortSearch = true;
     }
@@ -69,32 +69,33 @@ export class FileQueryExecutor {
         return await this.searchDirectoryFiles(source.path, source.isRecursive, excludePaths, filters)
     }
 
-    private async searchDirectoryFiles(path: string, isRecursive: boolean, excludePaths: Set<string>, filters: FileQueryFilterList): Promise<string[]> {
-        if (!excludePaths.has(path.toLowerCase()))
-        {
-            if (this.abortSearch) return;
+    private async searchDirectoryFiles(dirPath: string, isRecursive: boolean, excludePaths: Set<string>, filters: FileQueryFilterList): Promise<string[]> {
+        const results: string[] = [];
 
-            this.logger.isDebugEnabled && this.logger.debug("Searching directory: ", path);
-            try
-            {
-                const paths = await readdir(path, { withFileTypes: true });
+        if (!excludePaths.has(dirPath.toLowerCase())) {
+            if (this.abortSearch) return results;
+
+            this.logger.isDebugEnabled && this.logger.debug("Searching directory: ", dirPath);
+            try {
+                const paths = await readdir(dirPath, { withFileTypes: true });
+                const files = paths.filter(p => !p.isDirectory());
                 // Can't use simple filter, get all files
-                await this.testFiles(paths, filters);
+                results.push(...(await this.testFiles(files, filters)));
 
-                if (isRecursive)
-                {
-                    for (const child of paths.filter(p => p.isDirectory))
-                    {
-                        await this.searchDirectoryFiles(child.path, isRecursive, excludePaths, filters);
+                if (isRecursive) {
+                    const dirs = paths.filter(p => p.isDirectory());
+                    for (const dir of dirs) {
+                        results.push(...await this.searchDirectoryFiles(path.join(dir.path, dir.name), isRecursive, excludePaths, filters));
                     }
                 }
             }
-            catch (err)
-            {
+            catch (err) {
                 this.logger.isDebugEnabled && this.logger.debug(err.message);
             }
         }
-}
+
+        return results;
+    }
 
     private async searchFileList(source: FileListSearchSource, filters: FileQueryFilterList): Promise<string[]> {
         throw new Error("Method not implemented.");
@@ -109,7 +110,7 @@ export class FileQueryExecutor {
                 this.logger.isDebugEnabled && this.logger.debug("File passed all filters: ", file);
                 const filePath = path.join(file.path, file.name);
                 results.push(filePath);
-                this.onFileFound && this.onFileFound(filePath);                    
+                this.onFileFound && this.onFileFound(filePath);
             }
         }
 

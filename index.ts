@@ -7,13 +7,13 @@ import { DirectorySearchSource } from "./src/search-source";
 analog.configure({
     loggers: [{
         name: "",
-        level: analog.LogLevel.Debug
+        level: analog.LogLevel.Error
     }]
 });
 
 (async () => {    
     const sources = argv.slice(2).map(s => ({
-        isRecursive: false,
+        isRecursive: true,
         path: s
     } as DirectorySearchSource));
     const query = new Query(sources);
