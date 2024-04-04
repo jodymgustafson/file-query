@@ -18,6 +18,7 @@ analog.configure({
     } as DirectorySearchSource));
     const query = new Query(sources);
     const exe = new FileQueryExecutor(f => console.log("found: ", f));
-    const results = await exe.execute(query);
-    console.log("Found", results.length, "files");
+    await exe.execute(query)
+        .then(results => console.log("Found", results.length, "files"))
+        .catch(err => console.error(err.message));
 })();
