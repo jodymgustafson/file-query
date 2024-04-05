@@ -1,5 +1,12 @@
 {
-  "fileSources": [{ "path": "../src", "isRecursive": true }],
-  "excludePaths": ["./node_modules"],
-  "filters": [{ "type": "Contents", "operator": "Equals", "pattern": "FilterOperator" }]
+  "include": [
+    { "path": "../src", "isRecursive": true }
+  ],
+  "exclude": [
+    { "path": "../src/util" },
+    { "name": "node_modules" }
+  ],
+  "filters": [
+    { "type": "Contents", "operator": "Equal", "pattern": "RegExp" }
+  ]
 }

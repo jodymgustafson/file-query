@@ -35,7 +35,7 @@ export class FileQueryExecutor {
         this.abortSearch = false;
         const results: string[] = [];
 
-        const excludePaths = new Set(query.excludePaths.map(x => x.toLowerCase()));
+        const excludePaths = new Set(query.excludePaths.map((x: any) => (x.path ?? x.name).toLowerCase()));
 
         for (const source of query.fileSources) {
             if (this.abortSearch) break;

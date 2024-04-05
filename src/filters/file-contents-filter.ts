@@ -2,7 +2,6 @@ import { FileInfo } from "../util/file-info";
 import { getFileReader } from "../util/file-util";
 import { FilterOperator } from "./file-query-filter";
 import { PatternFilter } from "./pattern-filter";
-import path from "path";
 
 export class FileContentsFilter extends PatternFilter {
     /**

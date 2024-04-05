@@ -10,7 +10,7 @@ export abstract class PatternFilter extends EqualityFilter {
     protected readonly regExpes: RegExp[] = [];
 
     constructor(type: FilterType, pattern: string | string[] | RegExp, op?: FilterOperator) {
-        super(type, op ?? pattern instanceof Array ? "In" : "Equal");
+        super(type, op ?? (pattern instanceof Array ? "In" : "Equal"));
 
         if (typeof pattern === "string") {
             this.addPattern(pattern);
@@ -37,7 +37,7 @@ export abstract class PatternFilter extends EqualityFilter {
             .replace(/\./g, "\\.")
             .replace(/\*/g, ".*")
             .replace(/\?/g, ".{1}");
-        return new RegExp(`(^${exp}$)`);
+        return new RegExp(`(${exp})`, "i");
     }
 
     override toString(): string {

@@ -8,7 +8,7 @@ import { loadQuerySync } from "./src/query-loader";
 analog.configure({
     loggers: [{
         name: "",
-        level: analog.LogLevel.Debug
+        level: analog.LogLevel.Error
     }]
 });
 

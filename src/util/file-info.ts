@@ -20,6 +20,10 @@ export class FileInfo {
         return path.join(this.dirEnt.path, this.dirEnt.name);
     }
 
+    get extension(): string {
+        return path.extname(this.name);
+    }
+
     getAbsolutePath(): string {
         return path.resolve(this.fullPath);
     }

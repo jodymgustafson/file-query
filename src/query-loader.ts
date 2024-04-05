@@ -5,6 +5,7 @@ import { FilterOperator, FilterType } from "./filters/file-query-filter";
 import { FileQueryFilterList } from "./file-query-filter-list";
 import { FileContentsFilter } from "./filters/file-contents-filter";
 import { FileNameFilter } from "./filters/file-name-filter";
+import { SearchExclusion } from "./search-exclusion";
 
 type QueryFilterDefinition = {
     type: FilterType;
@@ -13,15 +14,15 @@ type QueryFilterDefinition = {
 };
 
 type QueryDefinition = {
-    fileSources: SearchSource[];
-    excludePaths?: string[];
+    include: SearchSource[];
+    exclude?: SearchExclusion[];
     filters?: QueryFilterDefinition[]
 };
 
 export function loadQuerySync(path: string): Query {
     const json = readFileSync(path, "utf-8");
     const info = JSON.parse(json) as QueryDefinition;
-    return new Query(info.fileSources, getFilters(info.filters), info.excludePaths);
+    return new Query(info.include, info.exclude, getFilters(info.filters));
 }
 
 function getFilters(filters: QueryFilterDefinition[]): FileQueryFilterList {
