@@ -1,4 +1,4 @@
-import { Dirent } from "fs";
+import { FileInfo } from "../util/file-info";
 
 export type FilterOperator = "Equal" | "NotEqual" |
     "LessThan" | "LessThanEqual" |
@@ -18,7 +18,7 @@ export interface FileQueryFilter {
      * Determines whether the given file is accepted by this filter. 
      * @param file 
      */
-    accept(file: Dirent): Promise<boolean>;
+    accept(file: FileInfo): Promise<boolean>;
 
     /** Property to get the name of the filter */
     get filterType(): FilterType;
@@ -35,14 +35,14 @@ export abstract class BaseFileQueryFilter implements FileQueryFilter {
      * Implementation of the file test
      * @param file File to test
      */
-    abstract acceptFile(file: Dirent): Promise<boolean>;
+    abstract acceptFile(file: FileInfo): Promise<boolean>;
 
     /**
      * Determines whether the given file is accepted by this filter.
      * @param file 
      * @returns 
      */
-    async accept(file: Dirent): Promise<boolean> {
+    async accept(file: FileInfo): Promise<boolean> {
         return await this.acceptFile(file);
     }
 

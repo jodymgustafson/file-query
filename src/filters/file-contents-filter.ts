@@ -1,4 +1,4 @@
-import { Dirent } from "fs";
+import { FileInfo } from "../util/file-info";
 import { getFileReader } from "../util/file-util";
 import { FilterOperator } from "./file-query-filter";
 import { PatternFilter } from "./pattern-filter";
@@ -31,13 +31,13 @@ export class FileContentsFilter extends PatternFilter {
         super("Contents", pattern, op);
     }
 
-    override async acceptFile(file: Dirent): Promise<boolean> {
+    override async acceptFile(file: FileInfo): Promise<boolean> {
         // Set initial state of acceptance
         // If checking "contains" assume not accepted
         // If checking "not contains" assume accepted
         let accepted = (this.filterOperator === "NotEqual");
 
-        const reader = getFileReader(path.join(file.path, file.name));
+        const reader = getFileReader(file.fullPath);
         for await (const line of reader) {
             accepted = this.testLine(line);
             if (accepted) break;

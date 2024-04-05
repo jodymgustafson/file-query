@@ -1,11 +1,9 @@
-import { Dirent } from "fs";
 import { FileQueryFilterList } from "./file-query-filter-list";
 import { FileQueryError } from "./filters/file-query-filter";
 import { Query } from "./query";
 import { DirectorySearchSource, FileListSearchSource } from "./search-source";
 import { Logger } from "analogging";
-import { access, constants, readdir } from "fs/promises";
-import path from "path";
+import { DirectoryInfo, FileInfo } from "./util/file-info";
 
 export type FileFoundCallback = (path: string) => void;
 
@@ -59,32 +57,31 @@ export class FileQueryExecutor {
     }
 
     private async searchDirectory(source: DirectorySearchSource, excludePaths: Set<string>, filters: FileQueryFilterList): Promise<string[]> {
-        try {
-            await access(source.path, constants.R_OK);
-        }
-        catch (err) {
-            throw new FileQueryError("Directory does not exist or you don't have permissions: " + source.path);
-        }
+        if (!excludePaths.has(source.path.toLowerCase())) {
+            const directory = new DirectoryInfo(source.path);
+            if (!await directory.exists()) {
+                throw new FileQueryError("Directory does not exist or you don't have permissions: " + source.path);
+            }
 
-        return await this.searchDirectoryFiles(source.path, source.isRecursive, excludePaths, filters)
+            return await this.searchDirectoryFiles(directory, source.isRecursive, excludePaths, filters);
+        }
     }
 
-    private async searchDirectoryFiles(dirPath: string, isRecursive: boolean, excludePaths: Set<string>, filters: FileQueryFilterList): Promise<string[]> {
+    private async searchDirectoryFiles(directory: DirectoryInfo, isRecursive: boolean, excludePaths: Set<string>, filters: FileQueryFilterList): Promise<string[]> {
         const results: string[] = [];
 
-        if (!excludePaths.has(dirPath.toLowerCase())) {
+        if (!excludePaths.has(directory.path.toLowerCase())) {
             if (this.abortSearch) return results;
 
-            this.logger.isDebugEnabled && this.logger.debug("Searching directory: ", dirPath);
+            this.logger.isDebugEnabled && this.logger.debug("Searching directory: ", directory.path);
             try {
-                const paths = await readdir(dirPath, { withFileTypes: true });
-                const files = paths.filter(p => !p.isDirectory());
+                const files = await directory.getFiles();
                 results.push(...(await this.testFiles(files, filters)));
 
                 if (isRecursive) {
-                    const dirs = paths.filter(p => p.isDirectory());
+                    const dirs = await directory.getDirectories();
                     for (const dir of dirs) {
-                        results.push(...await this.searchDirectoryFiles(path.join(dir.path, dir.name), isRecursive, excludePaths, filters));
+                        results.push(...await this.searchDirectoryFiles(dir, isRecursive, excludePaths, filters));
                     }
                 }
             }
@@ -100,14 +97,14 @@ export class FileQueryExecutor {
         throw new Error("Method not implemented.");
     }
 
-    private async testFiles(files: Dirent[], filters: FileQueryFilterList): Promise<string[]> {
+    private async testFiles(files: FileInfo[], filters: FileQueryFilterList): Promise<string[]> {
         const results: string[] = [];
 
         for (const file of files) {
             if (this.abortSearch) break;
-            if (this.testFile(file, filters)) {
+            if (await this.testFile(file, filters)) {
                 this.logger.isDebugEnabled && this.logger.debug("File passed all filters: ", file);
-                const filePath = path.join(file.path, file.name);
+                const filePath = file.getAbsolutePath();
                 results.push(filePath);
                 this.onFileFound && this.onFileFound(filePath);
             }
@@ -116,7 +113,7 @@ export class FileQueryExecutor {
         return results;
     }
 
-    private async testFile(file: Dirent, filters: FileQueryFilterList): Promise<boolean> {
+    private async testFile(file: FileInfo, filters: FileQueryFilterList): Promise<boolean> {
         this.logger.isDebugEnabled && this.logger.debug("Testing file: ", file);
 
         let accept = true;

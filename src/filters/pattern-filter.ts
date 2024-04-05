@@ -1,5 +1,4 @@
-import { Dirent } from "fs";
-import { EqualNotEqualFilter } from "./equality-filter";
+import { EqualityFilter } from "./equality-filter";
 import { FilterOperator, FilterType } from "./file-query-filter";
 
 /**
@@ -7,13 +6,16 @@ import { FilterOperator, FilterType } from "./file-query-filter";
  * The pattern can use star and question mark wildcards.
  * TODO: should we use glob instead?
  */
-export abstract class PatternFilter extends EqualNotEqualFilter {
+export abstract class PatternFilter extends EqualityFilter {
     protected readonly regExpes: RegExp[] = [];
 
     constructor(type: FilterType, pattern: string | string[] | RegExp, op?: FilterOperator) {
         super(type, op ?? pattern instanceof Array ? "In" : "Equal");
 
-        if (pattern instanceof Array) {
+        if (typeof pattern === "string") {
+            this.addPattern(pattern);
+        }
+        else if (pattern instanceof Array) {
             pattern.forEach(p => this.addPattern(p));
         }
         else if (pattern instanceof RegExp) {
@@ -21,10 +23,10 @@ export abstract class PatternFilter extends EqualNotEqualFilter {
         }
     }
 
-    /// <summary>
-    /// Converts a string pattern to a regex and adds it to the list of patterns to check
-    /// </summary>
-    /// <param name="pattern">Can use star and question mark wildcards</param>
+    /**
+     * Adds a pattern to the list of patterns to check
+     * @param pattern A pattern that can use star and question mark wildcards
+     */
     private addPattern(pattern: string): void {
         const re = this.patternToRegExp(pattern);
         this.regExpes.push(re);

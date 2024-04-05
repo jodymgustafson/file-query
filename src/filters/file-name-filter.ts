@@ -1,5 +1,5 @@
-import { Dirent } from "fs";
-import { EqualNotEqualFilter } from "./equality-filter";
+import { FileInfo } from "../util/file-info";
+import { EqualityFilter } from "./equality-filter";
 import { FilterOperator } from "./file-query-filter";
 import { PatternFilter } from "./pattern-filter";
 
@@ -35,7 +35,7 @@ export class FileNameFilter extends PatternFilter {
         super("Name", pattern, op);
     }
 
-    override async acceptFile(file: Dirent): Promise<boolean> {
+    override async acceptFile(file: FileInfo): Promise<boolean> {
         let accept = false;
         for (const re of this.regExpes) {
             // if (Logger.IsDebugEnabled) Logger.Debug("Testing filename: " + file.Name);

@@ -12,8 +12,9 @@
         "<node_internals>/**"
       ],
       "program": "${workspaceFolder}\\index.ts",
-      "args": ["./queries/ts-files.json"],
-      "preLaunchTask": "tsc: build - tsconfig.json",
+      "cwd": "${workspaceFolder}/dist",
+      "args": ["../queries/ts-files.json"],
+      // "preLaunchTask": "tsc: build - tsconfig.json",
       "outFiles": [
         "${workspaceFolder}/dist/**/*.js",
         "!${workspaceFolder}/node_modules"

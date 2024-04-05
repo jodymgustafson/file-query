@@ -3,7 +3,7 @@ import { BaseFileQueryFilter, FileQueryError, FilterOperator, FilterType } from 
 /**
  * Base class for filters that only accept = or <> operators
  */
-export abstract class EqualNotEqualFilter extends BaseFileQueryFilter {
+export abstract class EqualityFilter extends BaseFileQueryFilter {
     constructor(filterType: FilterType, op: FilterOperator) {
         super(filterType, op);
         this.validateOperator();
