@@ -8,14 +8,14 @@ export class Query {
     readonly fileSources: SearchSource[];
 
     /** List of paths to exclude from the search */
-    readonly excludePaths: SearchExclusion[];
+    readonly excludes: SearchExclusion[];
 
     /** List of filters to apply during search */
     readonly filters: FileQueryFilterList;
 
-    constructor(fileSources: SearchSource[] = [], excludePaths: SearchExclusion[] = [], filters = new FileQueryFilterList()) {
+    constructor(fileSources: SearchSource[] = [], excludes: SearchExclusion[] = [], filters = new FileQueryFilterList()) {
         this.fileSources = fileSources;
-        this.excludePaths = excludePaths;
+        this.excludes = excludes;
         this.filters = filters;
     }
 
@@ -23,8 +23,8 @@ export class Query {
         this.fileSources.push(src);
     }
 
-    public addExcludePath(path: SearchExclusion): void {
-        this.excludePaths.push(path);
+    public addExclude(path: SearchExclusion): void {
+        this.excludes.push(path);
     }
 
     public addFilter(filter: FileQueryFilter): void {

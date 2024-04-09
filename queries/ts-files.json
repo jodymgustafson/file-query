@@ -1,12 +1,13 @@
 {
   "include": [
-    { "path": "../src", "isRecursive": true }
+    { "path": "../", "isRecursive": true }
   ],
   "exclude": [
-    { "path": "../src/util" },
-    { "name": "node_modules" }
+    { "path": "../dist" },
+    { "name": "node_modules" },
+    { "name": ".git" }
   ],
   "filters": [
-    { "type": "Contents", "operator": "Equal", "pattern": "RegExp" }
+    { "type": "Contents", "operator": "Equal", "pattern": "r*gExp" }
   ]
 }

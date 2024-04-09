@@ -20,8 +20,8 @@ analog.configure({
     // const query = new Query(sources);
 
     const query = loadQuerySync(argv[2]);
-    const exe = new FileQueryExecutor(f => console.log("found: ", f));
+    const exe = new FileQueryExecutor(f => console.log("found:", f));
     await exe.execute(query)
-        .then(results => console.log("Found", results.length, "files"))
+        .then(results => console.log("Found", results.found.length, "files, searched", results.searched, "files."))
         .catch(err => console.error(err.message));
 })();
