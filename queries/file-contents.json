@@ -9,6 +9,6 @@
     { "name": ".git" }
   ],
   "filters": [
-    { "type": "Extension", "operator": "In", "pattern": ".ts, md" }
+    { "type": "Contents", "operator": "NotEqual", "pattern": "r*gExp" }
   ]
 }

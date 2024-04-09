@@ -8,6 +8,7 @@ import { FileNameFilter } from "./filters/file-name-filter";
 import { ExcludeName, ExcludePath, SearchExclusion } from "./search-exclusion";
 import { FileInfo } from "./util/file-info";
 import path from "path";
+import { FileExtensionFilter } from "./filters/file-extension-filter";
 
 type QueryFilterDefinition = {
     type: FilterType;
@@ -49,8 +50,11 @@ function getFilters(filters: QueryFilterDefinition[]): FileQueryFilterList {
             case "Name":
                 filterList.addFilter(new FileNameFilter(filter.pattern, filter.operator));
                 break;
+            case "Extension":
+                filterList.addFilter(new FileExtensionFilter(filter.pattern, filter.operator));
+                break;
             default:
-                throw new Error("Invalid filter type: " + filter.type);
+                throw new FileQueryError("Invalid filter type: " + filter.type);
         }
     }
 

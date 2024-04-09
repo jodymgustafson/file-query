@@ -13,7 +13,11 @@ export abstract class PatternFilter extends EqualityFilter {
         super(type, op ?? (pattern instanceof Array ? "In" : "Equal"));
 
         if (typeof pattern === "string") {
-            this.addPattern(pattern);
+            if (op === "In") {
+                pattern = pattern.split(",").map(p => p.trim());
+                pattern.forEach(p => this.addPattern(p));
+            }
+            else this.addPattern(pattern);
         }
         else if (pattern instanceof Array) {
             pattern.forEach(p => this.addPattern(p));
@@ -27,12 +31,12 @@ export abstract class PatternFilter extends EqualityFilter {
      * Adds a pattern to the list of patterns to check
      * @param pattern A pattern that can use star and question mark wildcards
      */
-    private addPattern(pattern: string): void {
+    protected addPattern(pattern: string): void {
         const re = this.patternToRegExp(pattern);
         this.regExpes.push(re);
     }
 
-    private patternToRegExp(pattern: string): RegExp {
+    protected patternToRegExp(pattern: string): RegExp {
         const exp = pattern.toLowerCase()
             .replace(/\./g, "\\.")
             .replace(/\*/g, ".*")

@@ -39,7 +39,8 @@ export class FileContentsFilter extends PatternFilter {
         const reader = getFileReader(file.fullPath);
         for await (const line of reader) {
             accepted = this.testLine(line);
-            if (accepted) break;
+            if (accepted && this.filterOperator !== "NotEqual") break;
+            else if (!accepted && this.filterOperator === "NotEqual") break;
         }
         return accepted;
     }

@@ -1,7 +1,7 @@
 import { BaseFileQueryFilter, FileQueryError, FilterOperator, FilterType } from "./file-query-filter";
 
 /**
- * Base class for filters that only accept = or <> operators
+ * Base class for filters that only accept Equal, NotEqual or In operators
  */
 export abstract class EqualityFilter extends BaseFileQueryFilter {
     constructor(filterType: FilterType, op: FilterOperator) {
