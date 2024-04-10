@@ -9,7 +9,9 @@
   "author": "JM Gustafson",
   "license": "ISC",
   "devDependencies": {
-    "@types/node": "^20.12.3"
+    "@types/jasmine": "^5.1.4",
+    "@types/node": "^20.12.3",
+    "jasmine": "^5.1.0"
   },
   "dependencies": {
     "analogging": "^1.1.0"

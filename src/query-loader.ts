@@ -1,14 +1,13 @@
-import { readFileSync } from "fs";
-import { Query } from "./query";
-import { DirectorySearchSource, SearchSource } from "./search-source";
-import { FileQueryError, FilterOperator, FilterType } from "./filters/file-query-filter";
+import path from "path";
 import { FileQueryFilterList } from "./file-query-filter-list";
 import { FileContentsFilter } from "./filters/file-contents-filter";
-import { FileNameFilter } from "./filters/file-name-filter";
-import { ExcludeName, ExcludePath, SearchExclusion } from "./search-exclusion";
-import { FileInfo } from "./util/file-info";
-import path from "path";
 import { FileExtensionFilter } from "./filters/file-extension-filter";
+import { FileNameFilter } from "./filters/file-name-filter";
+import { FileQueryError, FilterOperator, FilterType } from "./filters/file-query-filter";
+import { Query } from "./query";
+import { ExcludeName, ExcludePath, SearchExclusion } from "./search-exclusion";
+import { SearchSource } from "./search-source";
+import { readTextFileSync } from "./util/file-util";
 
 type QueryFilterDefinition = {
     type: FilterType;
@@ -28,7 +27,7 @@ type QueryDefinition = {
  * @returns A Query object
  */
 export function loadQuerySync(filePath: string): Query {
-    const json = readFileSync(filePath, "utf-8");
+    const json = readTextFileSync(filePath);
     const info = JSON.parse(json) as QueryDefinition;
 
     const basePath = path.resolve(path.dirname(filePath));

@@ -19,3 +19,7 @@ export function getFileReader(path: string, options?: BufferEncoding | ReadStrea
         input: stream
     });
 }
+
+export function readTextFileSync(filePath: string): string {
+    return fs.readFileSync(filePath, "utf-8")
+}
