@@ -18,7 +18,7 @@ export class FileExtensionFilter extends PatternFilter {
         return (ext[0] !== "." ? "." + ext : ext);
     }
 
-    override async acceptFile(file: FileInfo): Promise<boolean> {
+    protected override async acceptFile(file: FileInfo): Promise<boolean> {
         let accept = false;
         for (const re of this.regExpes) {
             this.logger.isDebugEnabled && this.logger.debug("Testing extension: ", file.name);

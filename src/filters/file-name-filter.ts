@@ -35,7 +35,7 @@ export class FileNameFilter extends PatternFilter {
         super("Name", pattern, op);
     }
 
-    override async acceptFile(file: FileInfo): Promise<boolean> {
+    protected override async acceptFile(file: FileInfo): Promise<boolean> {
         let accept = false;
         for (const re of this.regExpes) {
             // if (Logger.IsDebugEnabled) Logger.Debug("Testing filename: " + file.Name);

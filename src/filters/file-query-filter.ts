@@ -22,6 +22,9 @@ export interface FileQueryFilter {
 
     /** Property to get the name of the filter */
     get filterType(): FilterType;
+
+    /** Property to get the operator of the filter */
+    get filterOperator(): FilterOperator;
 }
 
 /**
@@ -35,7 +38,7 @@ export abstract class BaseFileQueryFilter implements FileQueryFilter {
      * Implementation of the file test
      * @param file File to test
      */
-    abstract acceptFile(file: FileInfo): Promise<boolean>;
+    protected abstract acceptFile(file: FileInfo): Promise<boolean>;
 
     /**
      * Determines whether the given file is accepted by this filter.

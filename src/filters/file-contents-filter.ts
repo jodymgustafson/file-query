@@ -30,7 +30,7 @@ export class FileContentsFilter extends PatternFilter {
         super("Contents", pattern, op);
     }
 
-    override async acceptFile(file: FileInfo): Promise<boolean> {
+    protected override async acceptFile(file: FileInfo): Promise<boolean> {
         // Set initial state of acceptance
         // If checking "contains" assume not accepted
         // If checking "not contains" assume accepted
